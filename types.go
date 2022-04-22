@@ -1,4 +1,4 @@
-package types
+package veritrans
 
 // Default interface fills default values
 type Default interface {
@@ -19,14 +19,15 @@ type CardParam struct {
 	DefaultCardID string `json:"defaultCardId,omitempty"`
 	CardNumber    string `json:"cardNumber"`
 	CardExpire    string `json:"cardExpire"`
+	Token         string `json:"token,omitempty"`
 }
 
 // RecurringChargeParm represents the "recurringChargeParam" of the request.
 type RecurringChargeParam struct {
 	GroupID       string `json:"groupId"`
-	StartDate     string `json:"startDate"`
-	EndDate       string `json:"endDate"`
-	FinalCharge   string `json:"finalCharge"`
+	StartDate     string `json:"startDate,omitempty"`
+	EndDate       string `json:"endDate,omitempty"`
+	FinalCharge   string `json:"finalCharge,omitempty"`
 	OneTimeAmount string `json:"oneTimeAmount"`
 	Amount        string `json:"amount"`
 }
@@ -56,7 +57,7 @@ type Params struct {
 	PayNowIDParam PayNowIDParam `json:"payNowIdParam"`
 	TxnVersion    string        `json:"txnVersion"`
 	DummyRequest  string        `json:"dummyRequest"`
-	MerchantCcID  string        `json:"merchantCcid"`
+	MerchantCCID  string        `json:"merchantCcid"`
 }
 
 // ConnectionParam represents the request parameter.
@@ -112,7 +113,7 @@ type PayNowIDResponse struct {
 	Status  string  `json:"status"`
 }
 
-type RegisterAccountRes struct {
+type AccountResponse struct {
 	PayNowIDResponse *PayNowIDResponse `json:"payNowIdResponse,omitempty"`
 	Result           Result            `json:"result"`
 }
