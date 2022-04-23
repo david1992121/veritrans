@@ -39,8 +39,8 @@ type ClientCardInfo struct {
 
 // Configuration of the MDK service
 type MDKConfig struct {
-	CardApiURL   string
-	CardApiToken string
+	ApiURL   string
+	ApiToken string
 }
 
 // MDKService handles the several veritrans APIs for MDK payment
@@ -59,7 +59,7 @@ func (mdk *MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardRespon
 		return nil, err
 	}
 
-	parsedURL, err := url.ParseRequestURI(mdk.Config.CardApiURL)
+	parsedURL, err := url.ParseRequestURI(mdk.Config.ApiURL)
 	if err == nil {
 		httpClient := &http.Client{}
 		body := bytes.NewBuffer(cardReqJSON)
@@ -94,7 +94,7 @@ func (mdk *MDKService) GetCardToken(cardInfo *ClientCardInfo) (string, error) {
 		CardExpire:     cardInfo.CardExpire,
 		CardHolderName: cardInfo.CardHolderName,
 		SecurityCode:   cardInfo.SecurityCode,
-		TokenAPIKey:    mdk.Config.CardApiToken,
+		TokenAPIKey:    mdk.Config.ApiToken,
 		Lang:           "ja",
 	}
 
