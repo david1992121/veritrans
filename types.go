@@ -7,8 +7,8 @@ type Default interface {
 
 // AccountBasicParam represents the "accountBasicParam" of the request.
 type AccountBasicParam struct {
-	CreateDate      string `json:"createDate"`
-	DeleteDate      string `json:"deleteDate"`
+	CreateDate      string `json:"createDate,omitempty"`
+	DeleteDate      string `json:"deleteDate,omitempty"`
 	ForceDeleteDate string `json:"forceDeleteDate"`
 }
 
@@ -65,6 +65,19 @@ type ConnectionParam struct {
 	Params   Params `json:"params"`
 	AuthHash string `json:"authHash"`
 }
+
+// Management modes
+type ManagementMode int32
+
+const (
+	MethodAdd ManagementMode = iota
+	MethodUpdate
+	MethodDelete
+	MethodRestore
+	MethodGet
+)
+
+var managementModes = []string{"Add", "Update", "Delete", "Restore", "Get"}
 
 // implementations of the Default interface
 func (payParam *PayNowIDParam) Default() {

@@ -19,8 +19,8 @@ func init() {
 
 func TestGetCardToken(t *testing.T) {
 	cardService := NewMDKService(MDKConfig{
-		CardApiURL:   os.Getenv("CARD_API_URL"),
-		CardApiToken: os.Getenv("CARD_API_TOKEN"),
+		ApiURL:   os.Getenv("MDK_API_URL"),
+		ApiToken: os.Getenv("MDK_API_TOKEN"),
 	})
 
 	nowTime := time.Now()
