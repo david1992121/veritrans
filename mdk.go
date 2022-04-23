@@ -24,7 +24,7 @@ type CardResponse struct {
 	Token           string `json:"token"`
 	TokenExpireDate string `json:"token_expire_date"`
 	ReqCardNumber   string `json:"req_card_number"`
-	Status          string `json:"string"`
+	Status          string `json:"status"`
 	Code            string `json:"code"`
 	Message         string `json:"message"`
 }
@@ -49,10 +49,11 @@ type MDKService struct {
 }
 
 func NewMDKService(config MDKConfig) *MDKService {
-	return &MDKService{Config: config}
+	newService := &MDKService{Config: config}
+	return newService
 }
 
-func (mdk MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardResponse, error) {
+func (mdk *MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardResponse, error) {
 	cardReqJSON, err := json.Marshal(cardRequest)
 	if err != nil {
 		return nil, err
@@ -71,10 +72,10 @@ func (mdk MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardRespons
 			if err == nil {
 				resBody, err := ioutil.ReadAll(res.Body)
 				if err == nil {
-					var cardResponse *CardResponse
-					err = json.Unmarshal(resBody, cardResponse)
+					var cardResponse CardResponse
+					err = json.Unmarshal(resBody, &cardResponse)
 					if err == nil {
-						return cardResponse, nil
+						return &cardResponse, nil
 					}
 				}
 			}
@@ -83,10 +84,11 @@ func (mdk MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardRespons
 	return nil, err
 }
 
-func (mdk MDKService) GetCardToken(cardInfo *ClientCardInfo) (string, error) {
+func (mdk *MDKService) GetCardToken(cardInfo *ClientCardInfo) (string, error) {
 	if cardInfo == nil {
 		return "", errors.New("no card information")
 	}
+
 	cardRequest := CardRequest{
 		CardNumber:     cardInfo.CardNumber,
 		CardExpire:     cardInfo.CardExpire,
