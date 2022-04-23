@@ -1,5 +1,15 @@
 package veritrans
 
+// Configuration of veritrans connection
+type ConnectionConfig struct {
+	MerchantCCID     string
+	MerchantPassword string
+	AccountApiURL    string
+	PaymentApiURL    string
+	TxnVersion       string
+	DummyRequest     string
+}
+
 // Default interface fills default values
 type Default interface {
 	Default()

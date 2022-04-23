@@ -12,22 +12,15 @@ import (
 )
 
 type AccountService struct {
-	Config AccountConfig
+	Config ConnectionConfig
 }
 
 // Configuration of the account service
 // ApiURL is the account management api endpoint (https://api.veritrans.co.jp:443/paynowid/v1/)
 // TxnVersion is the version of the veritrans api (2.0.0)
 // DummyRequest is the flag indicating whether the request is dummy or live
-type AccountConfig struct {
-	MerchantCCID     string
-	MerchantPassword string
-	ApiURL           string
-	TxnVersion       string
-	DummyRequest     string
-}
 
-func NewAccountService(config AccountConfig) *AccountService {
+func NewAccountService(config ConnectionConfig) *AccountService {
 	return &AccountService{Config: config}
 }
 
@@ -102,7 +95,7 @@ func (acc AccountService) ExecuteAccountProcess(serviceType ServiceType, mode Ma
 	connectionParam, err := acc.GetConnectionParam(accountParam)
 	if err == nil {
 		accountRes, err := acc.ExecuteAccountRequest(
-			fmt.Sprintf("%s/%s/%s", acc.Config.ApiURL, managementModes[mode], serviceTypes[serviceType]), connectionParam)
+			fmt.Sprintf("%s/%s/%s", acc.Config.AccountApiURL, managementModes[mode], serviceTypes[serviceType]), connectionParam)
 		if err == nil {
 			if accountRes.Result.MStatus == "success" {
 				return &accountRes.PayNowIDResponse.Account, nil

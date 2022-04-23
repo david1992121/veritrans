@@ -16,10 +16,10 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("No env file for testing")
 	}
-	accountService = NewAccountService(AccountConfig{
+	accountService = NewAccountService(ConnectionConfig{
 		MerchantCCID:     os.Getenv("MERCHANT_CCID"),
 		MerchantPassword: os.Getenv("MERCHANT_PASSWORD"),
-		ApiURL:           os.Getenv("CONNECTION_API_URL"),
+		AccountApiURL:    os.Getenv("ACCOUNT_API_URL"),
 		TxnVersion:       os.Getenv("TXN_VERSION"),
 		DummyRequest:     os.Getenv("DUMMY_REQUEST"),
 	})
