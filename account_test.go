@@ -26,7 +26,7 @@ func init() {
 }
 
 func TestAccount(t *testing.T) {
-	testAccountID := "TEST_ACCOUNT_01"
+	testAccountID := "TEST_ACCOUNT_1"
 	accountParam := &AccountParam{
 		AccountID: testAccountID,
 	}
@@ -62,7 +62,7 @@ func TestAccount(t *testing.T) {
 }
 
 func TestCard(t *testing.T) {
-	testAccountID := "TEST_ACCOUNT_02"
+	testAccountID := "TEST_ACCOUNT_2"
 	accountParam := &AccountParam{
 		AccountID: testAccountID,
 	}
@@ -82,49 +82,83 @@ func TestCard(t *testing.T) {
 	}
 
 	// Add Card
-	testCardNumber := "4111111111111111"
-	expectedCardNumber := "411111********11"
+	firstTestCardNumber := "4111111111111111"
+	firstExpectedCardNumber := "411111********11"
 	expiredAt := getAfterOneMonth()
 	accountParam.CardParam = &CardParam{
-		CardNumber:  testCardNumber,
-		CardExpire:  getAfterOneMonth(),
+		CardNumber:  firstTestCardNumber,
+		CardExpire:  expiredAt,
 		DefaultCard: "1",
 	}
 
 	account, err = accountService.CreateCard(accountParam)
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(account.CardInfo))
-	fmt.Println("Add Card Passed")
+	fmt.Println("Add The First Card Passed")
 
-	// Get Card
+	// Get Cards
 	accountParam.CardParam = nil
 	account, err = accountService.GetCard(accountParam)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(account.CardInfo))
-	assert.Equal(t, expectedCardNumber, account.CardInfo[0].CardNumber)
+	assert.Equal(t, firstExpectedCardNumber, account.CardInfo[0].CardNumber)
+	assert.Equal(t, "1", account.CardInfo[0].DefaultCard)
 	assert.Equal(t, expiredAt, account.CardInfo[0].CardExpire)
 	fmt.Println("Get Card Passed")
-	cardID := account.CardInfo[0].CardID
+	firstCardID := account.CardInfo[0].CardID
+
+	// Add another card
+	secondTestCardNumber := "5555555555554444"
+	secondExpectedCardNumber := "555555********44"
+	accountParam.CardParam = &CardParam{
+		CardNumber:  secondTestCardNumber,
+		CardExpire:  expiredAt,
+		DefaultCard: "0",
+	}
+
+	account, err = accountService.CreateCard(accountParam)
+	assert.Nil(t, err)
+	secondCardID := account.CardInfo[0].CardID
+	fmt.Println("Add The Second Card Passed")
+
+	// Get Cards
+	accountParam.CardParam = nil
+	account, err = accountService.GetCard(accountParam)
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(account.CardInfo))
+	assert.Equal(t, secondExpectedCardNumber, account.CardInfo[1].CardNumber)
+	assert.Equal(t, "0", account.CardInfo[1].DefaultCard)
 
 	// Update Card
 	newExpiredAt := getAfterOneYear()
 	accountParam.CardParam = &CardParam{
-		CardID:     cardID,
-		CardExpire: newExpiredAt,
+		CardID:      secondCardID,
+		DefaultCard: "1",
+		CardExpire:  newExpiredAt,
 	}
 	account, err = accountService.UpdateCard(accountParam)
 	assert.Nil(t, err)
-	assert.Equal(t, 1, len(account.CardInfo))
+	assert.Equal(t, secondExpectedCardNumber, account.CardInfo[0].CardNumber)
 	assert.Equal(t, newExpiredAt, account.CardInfo[0].CardExpire)
-	fmt.Println("Update Card Passed")
+	assert.Equal(t, "1", account.CardInfo[0].DefaultCard)
 
-	// Remove Card
+	// Remove Two Cards
 	accountParam.CardParam = &CardParam{
-		CardID: cardID,
+		CardID: firstCardID,
 	}
-	account, err = accountService.DeleteCard(accountParam)
+	_, err = accountService.DeleteCard(accountParam)
+	assert.Nil(t, err)
 
+	accountParam.CardParam = &CardParam{
+		CardID: secondCardID,
+	}
+	_, err = accountService.DeleteCard(accountParam)
+	assert.Nil(t, err)
+
+	// Get Cards
+	accountParam.CardParam = nil
+	account, err = accountService.GetCard(accountParam)
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(account.CardInfo))
 	fmt.Println("Remove Card Passed")
