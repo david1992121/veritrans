@@ -14,11 +14,11 @@ type AccountBasicParam struct {
 
 // CardParam is represents the "cardParam" of the request.
 type CardParam struct {
-	CardID        string `json:"cardId"`
+	CardID        string `json:"cardId,omitempty"`
 	DefaultCard   string `json:"defaultCard,omitempty"`
 	DefaultCardID string `json:"defaultCardId,omitempty"`
-	CardNumber    string `json:"cardNumber"`
-	CardExpire    string `json:"cardExpire"`
+	CardNumber    string `json:"cardNumber,omitempty"`
+	CardExpire    string `json:"cardExpire,omitempty"`
 	Token         string `json:"token,omitempty"`
 }
 
@@ -36,7 +36,7 @@ type RecurringChargeParam struct {
 type AccountParam struct {
 	AccountID            string                `json:"accountId"`
 	AccountBasicParam    *AccountBasicParam    `json:"accountBasicParam,omitempty"`
-	CardParm             *CardParam            `json:"cardParam,omitempty"`
+	CardParam            *CardParam            `json:"cardParam,omitempty"`
 	RecurringChargeParam *RecurringChargeParam `json:"recurringChargeParam,omitempty"`
 }
 
@@ -78,6 +78,16 @@ const (
 )
 
 var managementModes = []string{"Add", "Update", "Delete", "Restore", "Get"}
+
+// Service Type
+type ServiceType int32
+
+const (
+	AccountType ServiceType = iota
+	CardType
+)
+
+var serviceTypes = []string{"account", "cardinfo"}
 
 // implementations of the Default interface
 func (payParam *PayNowIDParam) Default() {
