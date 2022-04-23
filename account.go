@@ -74,7 +74,7 @@ func (acc AccountService) SetHash(connectionParam *ConnectionParam) error {
 	return nil
 }
 
-// Get connection param from account param
+// Get connection paramater from account parameter
 func (acc AccountService) GetConnectionParam(accountParam *AccountParam) (*ConnectionParam, error) {
 	payNowIdParam := &PayNowIDParam{
 		AccountParam: accountParam,
@@ -98,11 +98,11 @@ func (acc AccountService) GetConnectionParam(accountParam *AccountParam) (*Conne
 }
 
 // Execute Account CRUD
-func (acc AccountService) ExecuteAccountProcess(mode ManagementMode, accountParam *AccountParam) (*Account, error) {
+func (acc AccountService) ExecuteAccountProcess(serviceType ServiceType, mode ManagementMode, accountParam *AccountParam) (*Account, error) {
 	connectionParam, err := acc.GetConnectionParam(accountParam)
 	if err == nil {
 		accountRes, err := acc.ExecuteAccountRequest(
-			fmt.Sprintf("%s/%s/account", acc.Config.ApiURL, managementModes[mode]), connectionParam)
+			fmt.Sprintf("%s/%s/%s", acc.Config.ApiURL, managementModes[mode], serviceTypes[serviceType]), connectionParam)
 		if err == nil {
 			if accountRes.Result.MStatus == "success" {
 				return &accountRes.PayNowIDResponse.Account, nil
@@ -116,20 +116,40 @@ func (acc AccountService) ExecuteAccountProcess(mode ManagementMode, accountPara
 
 // Create a veritrans account
 func (acc AccountService) CreateAccount(accountParam *AccountParam) (*Account, error) {
-	return acc.ExecuteAccountProcess(MethodAdd, accountParam)
+	return acc.ExecuteAccountProcess(AccountType, MethodAdd, accountParam)
 }
 
 // Remove a veritrans account
 func (acc AccountService) DeleteAccount(accountParam *AccountParam) (*Account, error) {
-	return acc.ExecuteAccountProcess(MethodDelete, accountParam)
+	return acc.ExecuteAccountProcess(AccountType, MethodDelete, accountParam)
 }
 
 // Get a veritrans account
 func (acc AccountService) GetAccount(accountParam *AccountParam) (*Account, error) {
-	return acc.ExecuteAccountProcess(MethodGet, accountParam)
+	return acc.ExecuteAccountProcess(AccountType, MethodGet, accountParam)
 }
 
 // Get a veritrans account
 func (acc AccountService) RestoreAccount(accountParam *AccountParam) (*Account, error) {
-	return acc.ExecuteAccountProcess(MethodRestore, accountParam)
+	return acc.ExecuteAccountProcess(AccountType, MethodRestore, accountParam)
+}
+
+// Create a card
+func (acc AccountService) CreateCard(accountParam *AccountParam) (*Account, error) {
+	return acc.ExecuteAccountProcess(CardType, MethodAdd, accountParam)
+}
+
+// Remove a card
+func (acc AccountService) DeleteCard(accountParam *AccountParam) (*Account, error) {
+	return acc.ExecuteAccountProcess(CardType, MethodDelete, accountParam)
+}
+
+// Update a card information
+func (acc AccountService) UpdateCard(accountParam *AccountParam) (*Account, error) {
+	return acc.ExecuteAccountProcess(CardType, MethodUpdate, accountParam)
+}
+
+// Get a veritrans account
+func (acc AccountService) GetCard(accountParam *AccountParam) (*Account, error) {
+	return acc.ExecuteAccountProcess(CardType, MethodGet, accountParam)
 }

@@ -5,7 +5,6 @@ import (
 	"os"
 	"regexp"
 	"testing"
-	"time"
 
 	"github.com/joho/godotenv"
 	assert "github.com/stretchr/testify/require"
@@ -23,12 +22,9 @@ func TestGetCardToken(t *testing.T) {
 		ApiToken: os.Getenv("MDK_API_TOKEN"),
 	})
 
-	nowTime := time.Now()
-	expiredAt := nowTime.AddDate(0, 1, 0)
-
 	cardToken, err := cardService.GetCardToken(&ClientCardInfo{
 		CardNumber:   "4111111111111111",
-		CardExpire:   expiredAt.Format("01/06"),
+		CardExpire:   getAfterOneMonth(),
 		SecurityCode: "123",
 	})
 	re := regexp.MustCompile(`[0-9a-z\-]{36}`)
