@@ -1,6 +1,10 @@
 package veritrans
 
 // Configuration of veritrans connection
+// AccountApiURL is the account management api endpoint (https://api.veritrans.co.jp:443/paynowid/v1/)
+// PaymentApiURL is the payment api endpoint (https://api.veritrans.co.jp:443/paynow/v2)
+// TxnVersion is the version of the veritrans api (2.0.0)
+// DummyRequest is the flag indicating whether the request is dummy or live
 type ConnectionConfig struct {
 	MerchantCCID     string
 	MerchantPassword string
@@ -76,28 +80,58 @@ type ConnectionParam struct {
 	AuthHash string `json:"authHash"`
 }
 
-// Management modes
-type ManagementMode int32
+// Account Management modes
+type AccountManagementMode int32
 
 const (
-	MethodAdd ManagementMode = iota
+	MethodAdd AccountManagementMode = iota
 	MethodUpdate
 	MethodDelete
 	MethodRestore
 	MethodGet
 )
 
-var managementModes = []string{"Add", "Update", "Delete", "Restore", "Get"}
+var AccountManagementModes = []string{"Add", "Update", "Delete", "Restore", "Get"}
 
-// Service Type
-type ServiceType int32
+// Account Service Type
+type AccountServiceType int32
 
 const (
-	AccountType ServiceType = iota
+	AccountType AccountServiceType = iota
 	CardType
 )
 
-var serviceTypes = []string{"account", "cardinfo"}
+var AccountServiceTypes = []string{"account", "cardinfo"}
+
+// Payment modes
+type PaymentManagementMode int32
+
+const (
+	MethodAuthorize PaymentManagementMode = iota
+	MethodReAuthorize
+	MethodCapture
+	MethodCancel
+)
+
+var PaymentManagementModes = []string{"Authorize", "ReAuthorize", "Capture", "Cancel"}
+
+// Payment Service Type
+type PaymentServiceType int32
+
+const (
+	PayCard PaymentServiceType = iota
+	MPI
+	CVS
+	EM
+	Bank
+	UPop
+	Paypal
+	Saison
+	Alipay
+	Carrier
+)
+
+var PaymentServiceTypes = []string{"card", "mpi", "cvs", "em", "bank", "upop", "paypal", "saison", "alipay", "carrier"}
 
 // implementations of the Default interface
 func (payParam *PayNowIDParam) Default() {
@@ -146,7 +180,7 @@ type PayNowIDResponse struct {
 	Status  string  `json:"status"`
 }
 
-type AccountResponse struct {
+type ConnectionResponse struct {
 	PayNowIDResponse *PayNowIDResponse `json:"payNowIdResponse,omitempty"`
 	Result           Result            `json:"result"`
 }
