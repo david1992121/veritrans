@@ -12,7 +12,9 @@ import (
 
 func init() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("No env file for testing")
+		if os.Getenv("MDK_API_URL") == "" || os.Getenv("MDK_API_TOKEN") == "" {
+			log.Fatal("No env file for testing")
+		}
 	}
 }
 

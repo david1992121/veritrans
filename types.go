@@ -1,5 +1,18 @@
 package veritrans
 
+// list of the environment variables
+var EnvVariables = []string{
+	"MDK_API_TOKEN",
+	"MDK_API_URL",
+	"MERCHANT_CCID",
+	"MERCHANT_PASSWORD",
+	"DUMMY_REQUEST",
+	"TXN_VERSION",
+	"ACCOUNT_API_URL",
+	"PAYMENT_API_URL",
+	"SEARCH_API_URL",
+}
+
 // Configuration of veritrans connection
 // AccountApiURL is the account management api endpoint (https://api.veritrans.co.jp:443/paynowid/v1/)
 // PaymentApiURL is the payment api endpoint (https://api.veritrans.co.jp:443/paynow/v2)

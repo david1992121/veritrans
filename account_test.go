@@ -14,8 +14,13 @@ var accountService *AccountService
 
 func init() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("No env file for testing")
+		for _, envItem := range EnvVariables {
+			if os.Getenv(envItem) == "" {
+				log.Fatal("No env file for testing")
+			}
+		}
 	}
+
 	accountService = NewAccountService(ConnectionConfig{
 		MerchantCCID:     os.Getenv("MERCHANT_CCID"),
 		MerchantPassword: os.Getenv("MERCHANT_PASSWORD"),

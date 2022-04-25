@@ -14,7 +14,11 @@ var paymentService *PaymentService
 
 func init() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("No env file for testing")
+		for _, envItem := range EnvVariables {
+			if os.Getenv(envItem) == "" {
+				log.Fatal("No env file for testing")
+			}
+		}
 	}
 
 	config := ConnectionConfig{
