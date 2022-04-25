@@ -23,11 +23,15 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: '^1.17.5' # The Go version to download (if necessary) and use.
-
+      - name: setup env
+        run: |
+          echo "::set-env name=GOPATH::$(go env GOPATH)"
+          echo "::add-path::$(go env GOPATH)/bin"
+        shell: bash
       - name: Install dependencies
         run: |
           go version
-          go get -u golang.org/x/lint/golint
+          go install golang.org/x/lint/golint
 
       - name: Build
         run: go build .
@@ -51,5 +55,6 @@ jobs:
       
       - name: Run Vet & Lint
         run: |
+          go env
           go vet ./...
           golint -set_exit_status=1 ./...
