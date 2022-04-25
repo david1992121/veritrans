@@ -18,7 +18,7 @@ func init() {
 	}
 }
 
-func TestGetCardToken(t *testing.T) {
+func TestMDK(t *testing.T) {
 	cardService := NewMDKService(MDKConfig{
 		APIURL:   os.Getenv("MDK_API_URL"),
 		APIToken: os.Getenv("MDK_API_TOKEN"),

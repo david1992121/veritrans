@@ -92,10 +92,10 @@ type Params struct {
 	Amount           string         `json:"amount,omitempty"`
 	JPO              string         `json:"jpo,omitempty"`
 	WithCapture      string         `json:"withCapture,omitempty"`
-	PayNowIDParam    *PayNowIDParam `json:"payNowIDParam,omitempty"`
+	PayNowIDParam    *PayNowIDParam `json:"payNowIdParam,omitempty"`
 	ContainDummyFlag string         `json:"containDummyFlag,omitempty"`
 	ServiceTypeCd    []string       `json:"serviceTypeCd,omitempty"`
-	NewerFlag        string         `json:"newerFlag"`
+	NewerFlag        string         `json:"newerFlag,omitempty"`
 	SearchParam      *SearchParam   `json:"searchParameters,omitempty"`
 	TxnVersion       string         `json:"txnVersion"`
 	DummyRequest     string         `json:"dummyRequest"`
