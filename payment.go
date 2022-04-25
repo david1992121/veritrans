@@ -9,8 +9,11 @@ type PaymentService struct {
 	Config ConnectionConfig
 }
 
-func NewPaymentService(config ConnectionConfig) *PaymentService {
-	return &PaymentService{Config: config}
+func NewPaymentService(config ConnectionConfig) (*PaymentService, error) {
+	if config.PaymentApiURL != "" {
+		return &PaymentService{Config: config}, nil
+	}
+	return nil, errors.New("api URL not provided")
 }
 
 // Get connection paramater from params
@@ -39,24 +42,24 @@ func (pay PaymentService) getConnectionParam(param *Params) (*ConnectionParam, e
 }
 
 // Execute Payment
-func (pay PaymentService) executePaymentProcess(serviceType PaymentServiceType, mode PaymentManagementMode, param *Params) (bool, error) {
+func (pay PaymentService) executePaymentProcess(serviceType PaymentServiceType, mode PaymentManagementMode, param *Params) (*Result, error) {
 	connectionParam, err := pay.getConnectionParam(param)
 	if err == nil {
 		paymentRes, err := ProcessRequest(
 			fmt.Sprintf("%s/%s/%s", pay.Config.AccountApiURL, PaymentManagementModes[mode], PaymentServiceTypes[serviceType]), connectionParam)
 		if err == nil {
 			if paymentRes.Result.MStatus == "success" {
-				return true, nil
+				return &paymentRes.Result, nil
 			}
 
-			return false, errors.New(paymentRes.Result.MErrorMsg)
+			return nil, errors.New(paymentRes.Result.MErrorMsg)
 		}
 	}
-	return false, err
+	return nil, err
 }
 
 // Authorize function
-func (pay PaymentService) Authorize(param *Params, serviceType PaymentServiceType) (bool, error) {
+func (pay PaymentService) Authorize(param *Params, serviceType PaymentServiceType) (*Result, error) {
 	return pay.executePaymentProcess(
 		serviceType,
 		PaymentManagementMode(MethodAuthorize),
@@ -64,7 +67,7 @@ func (pay PaymentService) Authorize(param *Params, serviceType PaymentServiceTyp
 }
 
 // Capture function
-func (pay PaymentService) Capture(param *Params, serviceType PaymentServiceType) (bool, error) {
+func (pay PaymentService) Capture(param *Params, serviceType PaymentServiceType) (*Result, error) {
 	return pay.executePaymentProcess(
 		serviceType,
 		PaymentManagementMode(MethodCapture),
@@ -72,9 +75,18 @@ func (pay PaymentService) Capture(param *Params, serviceType PaymentServiceType)
 }
 
 // Cancel function
-func (pay PaymentService) Cancel(param *Params, serviceType PaymentServiceType) (bool, error) {
+func (pay PaymentService) Cancel(param *Params, serviceType PaymentServiceType) (*Result, error) {
 	return pay.executePaymentProcess(
 		serviceType,
 		PaymentManagementMode(MethodCancel),
 		param)
+}
+
+// Search function
+func (pay PaymentService) Search(param *Params, serviceType PaymentServiceType) (*Result, error) {
+	return pay.executePaymentProcess(
+		serviceType,
+		PaymentManagementMode(MethodSearch),
+		param,
+	)
 }
