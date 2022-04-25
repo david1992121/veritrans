@@ -50,6 +50,5 @@ jobs:
       
       - name: Run Vet & Lint
         run: |
-          go env
           go vet ./...
           golint -set_exit_status=1 ./...
