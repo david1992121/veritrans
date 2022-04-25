@@ -18,20 +18,13 @@ func NewPaymentService(config ConnectionConfig) (*PaymentService, error) {
 
 // Get connection paramater from params
 func (pay PaymentService) getConnectionParam(param *Params) (*ConnectionParam, error) {
-	payNowIDParam := &param.PayNowIDParam
-	payNowIDParam.Default()
+	newParam := *param
+	newParam.TxnVersion = pay.Config.TxnVersion
+	newParam.DummyRequest = pay.Config.DummyRequest
+	newParam.MerchantCCID = pay.Config.MerchantCCID
 
 	connectionParam := &ConnectionParam{
-		Params: Params{
-			OrderID:       param.OrderID,
-			Amount:        param.Amount,
-			JPO:           "10",
-			WithCapture:   param.WithCapture,
-			PayNowIDParam: param.PayNowIDParam,
-			TxnVersion:    pay.Config.TxnVersion,
-			DummyRequest:  pay.Config.DummyRequest,
-			MerchantCCID:  pay.Config.MerchantCCID,
-		},
+		Params:   newParam,
 		AuthHash: "",
 	}
 
@@ -44,18 +37,24 @@ func (pay PaymentService) getConnectionParam(param *Params) (*ConnectionParam, e
 // Execute Payment
 func (pay PaymentService) executePaymentProcess(serviceType PaymentServiceType, mode PaymentManagementMode, param *Params) (*Result, error) {
 	connectionParam, err := pay.getConnectionParam(param)
-	if err == nil {
-		paymentRes, err := ProcessRequest(
-			fmt.Sprintf("%s/%s/%s", pay.Config.AccountApiURL, PaymentManagementModes[mode], PaymentServiceTypes[serviceType]), connectionParam)
-		if err == nil {
-			if paymentRes.Result.MStatus == "success" {
-				return &paymentRes.Result, nil
-			}
-
-			return nil, errors.New(paymentRes.Result.MErrorMsg)
-		}
+	if err != nil {
+		return nil, err
 	}
-	return nil, err
+
+	apiURL := pay.Config.PaymentApiURL
+	if mode == PaymentManagementMode(MethodSearch) {
+		apiURL = pay.Config.SearchApiURL
+	}
+	paymentRes, err := ProcessRequest(
+		fmt.Sprintf("%s/%s/%s", apiURL, PaymentManagementModes[mode], PaymentServiceTypes[serviceType]), connectionParam)
+	if err != nil {
+		return nil, err
+	}
+
+	if paymentRes.Result.MStatus == "success" {
+		return &paymentRes.Result, nil
+	}
+	return nil, errors.New(paymentRes.Result.MErrorMsg)
 }
 
 // Authorize function

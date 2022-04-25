@@ -60,28 +60,35 @@ func (mdk *MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardRespon
 	}
 
 	parsedURL, err := url.ParseRequestURI(mdk.Config.ApiURL)
-	if err == nil {
-		httpClient := &http.Client{}
-		body := bytes.NewBuffer(cardReqJSON)
-		req, err := http.NewRequest("POST", parsedURL.String(), body)
-		req.Header.Set("Content-Type", "application/json; charset=utf-8")
-		req.Header.Set("Accept", "application/json")
-
-		if err == nil {
-			res, err := httpClient.Do(req)
-			if err == nil {
-				resBody, err := ioutil.ReadAll(res.Body)
-				if err == nil {
-					var cardResponse CardResponse
-					err = json.Unmarshal(resBody, &cardResponse)
-					if err == nil {
-						return &cardResponse, nil
-					}
-				}
-			}
-		}
+	if err != nil {
+		return nil, err
 	}
-	return nil, err
+
+	httpClient := &http.Client{}
+	body := bytes.NewBuffer(cardReqJSON)
+	req, err := http.NewRequest("POST", parsedURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("Accept", "application/json")
+
+	res, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var cardResponse CardResponse
+	err = json.Unmarshal(resBody, &cardResponse)
+	if err != nil {
+		return nil, err
+	}
+	return &cardResponse, nil
 }
 
 func (mdk *MDKService) GetCardToken(cardInfo *ClientCardInfo) (string, error) {

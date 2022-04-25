@@ -84,7 +84,7 @@ func TestCard(t *testing.T) {
 	// Add Card
 	firstTestCardNumber := "4111111111111111"
 	firstExpectedCardNumber := "411111********11"
-	expiredAt := getAfterOneMonth()
+	expiredAt := GetAfterOneMonth()
 	accountParam.CardParam = &CardParam{
 		CardNumber:  firstTestCardNumber,
 		CardExpire:  expiredAt,
@@ -131,7 +131,7 @@ func TestCard(t *testing.T) {
 	assert.Equal(t, "0", account.CardInfo[1].DefaultCard)
 
 	// Update Card
-	newExpiredAt := getAfterOneYear()
+	newExpiredAt := GetAfterOneYear()
 	accountParam.CardParam = &CardParam{
 		CardID:      secondCardID,
 		DefaultCard: "1",

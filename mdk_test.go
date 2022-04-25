@@ -24,7 +24,7 @@ func TestGetCardToken(t *testing.T) {
 
 	cardToken, err := cardService.GetCardToken(&ClientCardInfo{
 		CardNumber:   "4111111111111111",
-		CardExpire:   getAfterOneMonth(),
+		CardExpire:   GetAfterOneMonth(),
 		SecurityCode: "123",
 	})
 	re := regexp.MustCompile(`[0-9a-z\-]{36}`)
