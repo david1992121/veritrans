@@ -13,21 +13,21 @@ import (
 	"time"
 )
 
-// get the time after one month from now
+// GetAfterOneMonth function
 func GetAfterOneMonth() string {
 	nowTime := time.Now()
 	expiredAt := nowTime.AddDate(0, 1, 0)
 	return expiredAt.Format("01/06")
 }
 
-// get the time after one year from now
+// GetAfterOneYear function
 func GetAfterOneYear() string {
 	nowTime := time.Now()
 	expiredAt := nowTime.AddDate(1, 0, 0)
 	return expiredAt.Format("01/06")
 }
 
-// get random id
+// GetRandomID function
 func GetRandomID(digit int) int {
 	rand.Seed(time.Now().UnixNano())
 	low := int(math.Pow10(digit - 1))
@@ -35,7 +35,7 @@ func GetRandomID(digit int) int {
 	return low + rand.Intn(high-low)
 }
 
-// process the request
+// ProcessRequest function
 func ProcessRequest(requestURL string, connectionParam *ConnectionParam) (*ConnectionResponse, error) {
 	var err error
 	paramByte, err := json.Marshal(connectionParam)
@@ -71,7 +71,7 @@ func ProcessRequest(requestURL string, connectionParam *ConnectionParam) (*Conne
 	return &connectionRes, err
 }
 
-// Handler to make hash data of params
+// SetHash is a handler to make hash data of params
 func SetHash(connectionParam *ConnectionParam, merchantID, password string) error {
 	paramJSON, err := json.Marshal(connectionParam.Params)
 	if err != nil {

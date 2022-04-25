@@ -24,7 +24,7 @@ func init() {
 	accountService = NewAccountService(ConnectionConfig{
 		MerchantCCID:     os.Getenv("MERCHANT_CCID"),
 		MerchantPassword: os.Getenv("MERCHANT_PASSWORD"),
-		AccountApiURL:    os.Getenv("ACCOUNT_API_URL"),
+		AccountAPIURL:    os.Getenv("ACCOUNT_API_URL"),
 		TxnVersion:       os.Getenv("TXN_VERSION"),
 		DummyRequest:     os.Getenv("DUMMY_REQUEST"),
 	})

@@ -1,4 +1,5 @@
 [![CI](https://github.com/david1992121/veritrans/actions/workflows/main.yml/badge.svg)](https://github.com/david1992121/veritrans/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/david1992121/veritrans/branch/main/graph/badge.svg?token=IJAN6H2PU2)](https://codecov.io/gh/david1992121/veritrans)
 
 # Go Veritrans4G
 
@@ -15,8 +16,8 @@
 1. Initialize the MDK service
 ```
 cardService := NewMDKService(MDKConfig{
-  ApiURL:   "MDK_API_URL",
-  ApiToken: "MDK_API_TOKEN",
+  APIURL:   "MDK_API_URL",
+  APIToken: "MDK_API_TOKEN",
 })
 ```
 2. Get MDK token from the card information
@@ -32,7 +33,7 @@ cardToken, err := cardService.GetCardToken(&ClientCardInfo{
 config := ConnectionConfig{
   MerchantCCID:     "MERCHANT_CCID",
   MerchantPassword: "MERCHANT_PASSWORD",
-  PaymentApiURL:    "PAYMENT_API_URL",
+  PaymentAPIURL:    "PAYMENT_API_URL",
   TxnVersion:       "TXN_VERSION",
   DummyRequest:     "DUMMY_REQUEST",
 }
@@ -59,7 +60,7 @@ paymentService.Authorize(&authorizeParam, PaymentServiceType(PayCard))
 accountService = NewAccountService(ConnectionConfig{
   MerchantCCID:    "MERCHANT_CCID",
   MerchantPassword:"MERCHANT_PASSWORD",
-  AccountApiURL:   "ACCOUNT_API_URL",
+  AccountAPIURL:   "ACCOUNT_API_URL",
   TxnVersion:      "TXN_VERSION",
   DummyRequest:    "DUMMY_REQUEST",
 })

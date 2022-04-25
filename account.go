@@ -5,24 +5,26 @@ import (
 	"fmt"
 )
 
+// AccountService is a service for managing accounts
 type AccountService struct {
 	Config ConnectionConfig
 }
 
+// NewAccountService initializes the account service
 func NewAccountService(config ConnectionConfig) *AccountService {
 	return &AccountService{Config: config}
 }
 
 // Get connection paramater from account parameter
 func (acc AccountService) getConnectionParam(accountParam *AccountParam) (*ConnectionParam, error) {
-	payNowIdParam := &PayNowIDParam{
+	payNowIDParam := &PayNowIDParam{
 		AccountParam: accountParam,
 	}
-	payNowIdParam.Default()
+	payNowIDParam.Default()
 
 	connectionParam := &ConnectionParam{
 		Params: Params{
-			PayNowIDParam: payNowIdParam,
+			PayNowIDParam: payNowIDParam,
 			TxnVersion:    acc.Config.TxnVersion,
 			DummyRequest:  acc.Config.DummyRequest,
 			MerchantCCID:  acc.Config.MerchantCCID,
@@ -44,7 +46,7 @@ func (acc AccountService) executeAccountProcess(serviceType AccountServiceType, 
 	}
 
 	accountRes, err := ProcessRequest(
-		fmt.Sprintf("%s/%s/%s", acc.Config.AccountApiURL, AccountManagementModes[mode], AccountServiceTypes[serviceType]), connectionParam)
+		fmt.Sprintf("%s/%s/%s", acc.Config.AccountAPIURL, AccountManagementModes[mode], AccountServiceTypes[serviceType]), connectionParam)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +58,7 @@ func (acc AccountService) executeAccountProcess(serviceType AccountServiceType, 
 	return nil, errors.New(accountRes.Result.MErrorMsg)
 }
 
-// Create a veritrans account
+// CreateAccount function
 func (acc AccountService) CreateAccount(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(AccountType),
@@ -64,7 +66,7 @@ func (acc AccountService) CreateAccount(accountParam *AccountParam) (*Account, e
 		accountParam)
 }
 
-// Remove a veritrans account
+// DeleteAccount function
 func (acc AccountService) DeleteAccount(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(AccountType),
@@ -72,7 +74,7 @@ func (acc AccountService) DeleteAccount(accountParam *AccountParam) (*Account, e
 		accountParam)
 }
 
-// Get a veritrans account
+// GetAccount function
 func (acc AccountService) GetAccount(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(AccountType),
@@ -80,7 +82,7 @@ func (acc AccountService) GetAccount(accountParam *AccountParam) (*Account, erro
 		accountParam)
 }
 
-// Get a veritrans account
+// RestoreAccount function
 func (acc AccountService) RestoreAccount(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(AccountType),
@@ -88,7 +90,7 @@ func (acc AccountService) RestoreAccount(accountParam *AccountParam) (*Account, 
 		accountParam)
 }
 
-// Create a card
+// CreateCard function
 func (acc AccountService) CreateCard(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(CardType),
@@ -96,7 +98,7 @@ func (acc AccountService) CreateCard(accountParam *AccountParam) (*Account, erro
 		accountParam)
 }
 
-// Remove a card
+// DeleteCard function
 func (acc AccountService) DeleteCard(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(CardType),
@@ -104,7 +106,7 @@ func (acc AccountService) DeleteCard(accountParam *AccountParam) (*Account, erro
 		accountParam)
 }
 
-// Update a card information
+// UpdateCard function
 func (acc AccountService) UpdateCard(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(CardType),
@@ -112,7 +114,7 @@ func (acc AccountService) UpdateCard(accountParam *AccountParam) (*Account, erro
 		accountParam)
 }
 
-// Get a veritrans account
+// GetCard function
 func (acc AccountService) GetCard(accountParam *AccountParam) (*Account, error) {
 	return acc.executeAccountProcess(
 		AccountServiceType(CardType),

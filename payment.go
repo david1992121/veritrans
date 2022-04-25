@@ -5,12 +5,14 @@ import (
 	"fmt"
 )
 
+// PaymentService is a service for the payment api
 type PaymentService struct {
 	Config ConnectionConfig
 }
 
+// NewPaymentService initializes the PaymentService
 func NewPaymentService(config ConnectionConfig) (*PaymentService, error) {
-	if config.PaymentApiURL != "" {
+	if config.PaymentAPIURL != "" {
 		return &PaymentService{Config: config}, nil
 	}
 	return nil, errors.New("api URL not provided")
@@ -41,9 +43,9 @@ func (pay PaymentService) executePaymentProcess(serviceType PaymentServiceType, 
 		return nil, err
 	}
 
-	apiURL := pay.Config.PaymentApiURL
+	apiURL := pay.Config.PaymentAPIURL
 	if mode == PaymentManagementMode(MethodSearch) {
-		apiURL = pay.Config.SearchApiURL
+		apiURL = pay.Config.SearchAPIURL
 	}
 	paymentRes, err := ProcessRequest(
 		fmt.Sprintf("%s/%s/%s", apiURL, PaymentManagementModes[mode], PaymentServiceTypes[serviceType]), connectionParam)

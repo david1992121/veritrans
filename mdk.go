@@ -9,7 +9,7 @@ import (
 	"net/url"
 )
 
-// Struct of the request parameters of the veritrans MDK token api
+// CardRequest is a struct of the request parameters of the veritrans MDK token api
 type CardRequest struct {
 	CardNumber     string `json:"card_number"`
 	CardExpire     string `json:"card_expire"`
@@ -19,7 +19,7 @@ type CardRequest struct {
 	Lang           string `json:"lang"`
 }
 
-// Response of the veritrans MDK token api
+// CardResponse represents a response of the veritrans MDK token api
 type CardResponse struct {
 	Token           string `json:"token"`
 	TokenExpireDate string `json:"token_expire_date"`
@@ -29,7 +29,7 @@ type CardResponse struct {
 	Message         string `json:"message"`
 }
 
-// Card Information of the client
+// ClientCardInfo indicates the card Information of the client
 type ClientCardInfo struct {
 	CardNumber     string `json:"card_number"`
 	CardExpire     string `json:"card_expire"`
@@ -37,10 +37,10 @@ type ClientCardInfo struct {
 	CardHolderName string `json:"cardholder_name,omitempty"`
 }
 
-// Configuration of the MDK service
+// MDKConfig is a configuration of the MDK service
 type MDKConfig struct {
-	ApiURL   string
-	ApiToken string
+	APIURL   string
+	APIToken string
 }
 
 // MDKService handles the several veritrans APIs for MDK payment
@@ -48,18 +48,20 @@ type MDKService struct {
 	Config MDKConfig
 }
 
+// NewMDKService initializes a MDK service
 func NewMDKService(config MDKConfig) *MDKService {
 	newService := &MDKService{Config: config}
 	return newService
 }
 
+// ExecuteCardRequest process the requests
 func (mdk *MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardResponse, error) {
 	cardReqJSON, err := json.Marshal(cardRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	parsedURL, err := url.ParseRequestURI(mdk.Config.ApiURL)
+	parsedURL, err := url.ParseRequestURI(mdk.Config.APIURL)
 	if err != nil {
 		return nil, err
 	}
@@ -91,6 +93,7 @@ func (mdk *MDKService) ExecuteCardRequest(cardRequest *CardRequest) (*CardRespon
 	return &cardResponse, nil
 }
 
+// GetCardToken gets a card token
 func (mdk *MDKService) GetCardToken(cardInfo *ClientCardInfo) (string, error) {
 	if cardInfo == nil {
 		return "", errors.New("no card information")
@@ -101,7 +104,7 @@ func (mdk *MDKService) GetCardToken(cardInfo *ClientCardInfo) (string, error) {
 		CardExpire:     cardInfo.CardExpire,
 		CardHolderName: cardInfo.CardHolderName,
 		SecurityCode:   cardInfo.SecurityCode,
-		TokenAPIKey:    mdk.Config.ApiToken,
+		TokenAPIKey:    mdk.Config.APIToken,
 		Lang:           "ja",
 	}
 
