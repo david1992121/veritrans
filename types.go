@@ -1,5 +1,20 @@
 package veritrans
 
+// Configuration of veritrans connection
+// AccountApiURL is the account management api endpoint (https://api.veritrans.co.jp:443/paynowid/v1/)
+// PaymentApiURL is the payment api endpoint (https://api.veritrans.co.jp:443/paynow/v2)
+// TxnVersion is the version of the veritrans api (2.0.0)
+// DummyRequest is the flag indicating whether the request is dummy or live
+type ConnectionConfig struct {
+	MerchantCCID     string
+	MerchantPassword string
+	AccountApiURL    string
+	PaymentApiURL    string
+	SearchApiURL     string
+	TxnVersion       string
+	DummyRequest     string
+}
+
 // Default interface fills default values
 type Default interface {
 	Default()
@@ -48,16 +63,29 @@ type PayNowIDParam struct {
 	FreeKey      string        `json:"freeKey,omitempty"`
 }
 
+// OrderParam
+type OrderParam struct {
+	OrderID string `json:"orderId"`
+}
+
+// SearchParam represents the "searchParameters" of the request.
+type SearchParam struct {
+	Common OrderParam `json:"common"`
+}
+
 // Params represents the "params" of the request.
 type Params struct {
-	OrderID       string        `json:"orderId,omitempty"`
-	Amount        string        `json:"amount,omitempty"`
-	JPO           string        `json:"jpo,omitempty"`
-	WithCapture   string        `json:"withCapture,omitempty"`
-	PayNowIDParam PayNowIDParam `json:"payNowIdParam"`
-	TxnVersion    string        `json:"txnVersion"`
-	DummyRequest  string        `json:"dummyRequest"`
-	MerchantCCID  string        `json:"merchantCcid"`
+	OrderID          string        `json:"orderId,omitempty"`
+	Amount           string        `json:"amount,omitempty"`
+	JPO              string        `json:"jpo,omitempty"`
+	WithCapture      string        `json:"withCapture,omitempty"`
+	PayNowIDParam    PayNowIDParam `json:"payNowIdParam"`
+	ContainDummyFlag string        `json:"containDummyFlag,omitempty"`
+	ServiceTypeCd    []string      `json:"serviceTypeCd,omitempty"`
+	SearchParam      *SearchParam  `json:"searchParameters,omitempty"`
+	TxnVersion       string        `json:"txnVersion"`
+	DummyRequest     string        `json:"dummyRequest"`
+	MerchantCCID     string        `json:"merchantCcid"`
 }
 
 // ConnectionParam represents the request parameter.
@@ -66,28 +94,60 @@ type ConnectionParam struct {
 	AuthHash string `json:"authHash"`
 }
 
-// Management modes
-type ManagementMode int32
+// Account Management modes
+type AccountManagementMode int32
 
 const (
-	MethodAdd ManagementMode = iota
+	MethodAdd AccountManagementMode = iota
 	MethodUpdate
 	MethodDelete
 	MethodRestore
 	MethodGet
 )
 
-var managementModes = []string{"Add", "Update", "Delete", "Restore", "Get"}
+var AccountManagementModes = []string{"Add", "Update", "Delete", "Restore", "Get"}
 
-// Service Type
-type ServiceType int32
+// Account Service Type
+type AccountServiceType int32
 
 const (
-	AccountType ServiceType = iota
+	AccountType AccountServiceType = iota
 	CardType
 )
 
-var serviceTypes = []string{"account", "cardinfo"}
+var AccountServiceTypes = []string{"account", "cardinfo"}
+
+// Payment modes
+type PaymentManagementMode int32
+
+const (
+	MethodAuthorize PaymentManagementMode = iota
+	MethodReAuthorize
+	MethodCapture
+	MethodCancel
+	MethodSearch
+)
+
+var PaymentManagementModes = []string{"Authorize", "ReAuthorize", "Capture", "Cancel", "Search"}
+
+// Payment Service Type
+type PaymentServiceType int32
+
+const (
+	PayCard PaymentServiceType = iota
+	MPI
+	CVS
+	EM
+	Bank
+	UPop
+	Paypal
+	Saison
+	Alipay
+	Carrier
+	Search
+)
+
+var PaymentServiceTypes = []string{"card", "mpi", "cvs", "em", "bank", "upop", "paypal", "saison", "alipay", "carrier", "search"}
 
 // implementations of the Default interface
 func (payParam *PayNowIDParam) Default() {
@@ -113,9 +173,34 @@ func (recurringChargeParam *RecurringChargeParam) Default() {
 
 // response types
 type Result struct {
-	VResultCode string `json:"vResultCode"`
-	MStatus     string `json:"mstatus"`
-	MErrorMsg   string `json:"merrMsg"`
+	VResultCode string      `json:"vResultCode"`
+	MStatus     string      `json:"mstatus"`
+	MErrorMsg   string      `json:"merrMsg"`
+	OrderInfos  []OrderInfo `json:"orderInfos"`
+}
+
+type ProperTransactionInfo struct {
+	CardTransactionType string `json:"cardTransactionType"`
+	ReqWithCapture      bool   `json:"reqWithCapture"`
+	ReqJPOInformation   string `json:"reqJpoInformation"`
+}
+
+type TransactionInfo struct {
+	Amount      string                `json:"amount"`
+	Command     string                `json:"command"`
+	MStatus     string                `json:"mstatus"`
+	ProperInfo  ProperTransactionInfo `json:"properTransactionInfo"`
+	TxnDateTime string                `json:"txnDatetime"`
+	TxnID       string                `json:"txnId"`
+	VResultCode string                `json:"vResultCode"`
+}
+
+type OrderInfo struct {
+	AccountID        string            `json:"accountId"`
+	Index            string            `json:"index"`
+	OrderID          string            `json:"orderId"`
+	ServiceTypeCd    string            `json:"serviceTypeCd"`
+	TransactionInfos []TransactionInfo `json:"transactionInfos"`
 }
 
 type CardInfo struct {
@@ -136,7 +221,7 @@ type PayNowIDResponse struct {
 	Status  string  `json:"status"`
 }
 
-type AccountResponse struct {
+type ConnectionResponse struct {
 	PayNowIDResponse *PayNowIDResponse `json:"payNowIdResponse,omitempty"`
 	Result           Result            `json:"result"`
 }
