@@ -15,8 +15,8 @@
 1. Initialize the MDK service
 ```
 cardService := NewMDKService(MDKConfig{
-  ApiURL:   "MDK_API_URL",
-  ApiToken: "MDK_API_TOKEN",
+  APIURL:   "MDK_API_URL",
+  APIToken: "MDK_API_TOKEN",
 })
 ```
 2. Get MDK token from the card information
@@ -32,7 +32,7 @@ cardToken, err := cardService.GetCardToken(&ClientCardInfo{
 config := ConnectionConfig{
   MerchantCCID:     "MERCHANT_CCID",
   MerchantPassword: "MERCHANT_PASSWORD",
-  PaymentApiURL:    "PAYMENT_API_URL",
+  PaymentAPIURL:    "PAYMENT_API_URL",
   TxnVersion:       "TXN_VERSION",
   DummyRequest:     "DUMMY_REQUEST",
 }
@@ -59,7 +59,7 @@ paymentService.Authorize(&authorizeParam, PaymentServiceType(PayCard))
 accountService = NewAccountService(ConnectionConfig{
   MerchantCCID:    "MERCHANT_CCID",
   MerchantPassword:"MERCHANT_PASSWORD",
-  AccountApiURL:   "ACCOUNT_API_URL",
+  AccountAPIURL:   "ACCOUNT_API_URL",
   TxnVersion:      "TXN_VERSION",
   DummyRequest:    "DUMMY_REQUEST",
 })
