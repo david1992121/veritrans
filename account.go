@@ -22,7 +22,7 @@ func (acc AccountService) getConnectionParam(accountParam *AccountParam) (*Conne
 
 	connectionParam := &ConnectionParam{
 		Params: Params{
-			PayNowIDParam: *payNowIdParam,
+			PayNowIDParam: payNowIdParam,
 			TxnVersion:    acc.Config.TxnVersion,
 			DummyRequest:  acc.Config.DummyRequest,
 			MerchantCCID:  acc.Config.MerchantCCID,
@@ -39,18 +39,21 @@ func (acc AccountService) getConnectionParam(accountParam *AccountParam) (*Conne
 // Execute Account CRUD
 func (acc AccountService) executeAccountProcess(serviceType AccountServiceType, mode AccountManagementMode, accountParam *AccountParam) (*Account, error) {
 	connectionParam, err := acc.getConnectionParam(accountParam)
-	if err == nil {
-		accountRes, err := ProcessRequest(
-			fmt.Sprintf("%s/%s/%s", acc.Config.AccountApiURL, AccountManagementModes[mode], AccountServiceTypes[serviceType]), connectionParam)
-		if err == nil {
-			if accountRes.Result.MStatus == "success" {
-				return &accountRes.PayNowIDResponse.Account, nil
-			}
-
-			return nil, errors.New(accountRes.Result.MErrorMsg)
-		}
+	if err != nil {
+		return nil, err
 	}
-	return nil, err
+
+	accountRes, err := ProcessRequest(
+		fmt.Sprintf("%s/%s/%s", acc.Config.AccountApiURL, AccountManagementModes[mode], AccountServiceTypes[serviceType]), connectionParam)
+	if err != nil {
+		return nil, err
+	}
+
+	if accountRes.Result.MStatus == "success" {
+		return &accountRes.PayNowIDResponse.Account, nil
+	}
+
+	return nil, errors.New(accountRes.Result.MErrorMsg)
 }
 
 // Create a veritrans account

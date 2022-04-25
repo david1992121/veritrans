@@ -75,17 +75,18 @@ type SearchParam struct {
 
 // Params represents the "params" of the request.
 type Params struct {
-	OrderID          string        `json:"orderId,omitempty"`
-	Amount           string        `json:"amount,omitempty"`
-	JPO              string        `json:"jpo,omitempty"`
-	WithCapture      string        `json:"withCapture,omitempty"`
-	PayNowIDParam    PayNowIDParam `json:"payNowIdParam"`
-	ContainDummyFlag string        `json:"containDummyFlag,omitempty"`
-	ServiceTypeCd    []string      `json:"serviceTypeCd,omitempty"`
-	SearchParam      *SearchParam  `json:"searchParameters,omitempty"`
-	TxnVersion       string        `json:"txnVersion"`
-	DummyRequest     string        `json:"dummyRequest"`
-	MerchantCCID     string        `json:"merchantCcid"`
+	OrderID          string         `json:"orderId,omitempty"`
+	Amount           string         `json:"amount,omitempty"`
+	JPO              string         `json:"jpo,omitempty"`
+	WithCapture      string         `json:"withCapture,omitempty"`
+	PayNowIDParam    *PayNowIDParam `json:"payNowIdParam,omitempty"`
+	ContainDummyFlag string         `json:"containDummyFlag,omitempty"`
+	ServiceTypeCd    []string       `json:"serviceTypeCd,omitempty"`
+	NewerFlag        string         `json:"newerFlag"`
+	SearchParam      *SearchParam   `json:"searchParameters,omitempty"`
+	TxnVersion       string         `json:"txnVersion"`
+	DummyRequest     string         `json:"dummyRequest"`
+	MerchantCCID     string         `json:"merchantCcid"`
 }
 
 // ConnectionParam represents the request parameter.
@@ -176,12 +177,12 @@ type Result struct {
 	VResultCode string      `json:"vResultCode"`
 	MStatus     string      `json:"mstatus"`
 	MErrorMsg   string      `json:"merrMsg"`
-	OrderInfos  []OrderInfo `json:"orderInfos"`
+	OrderInfos  *OrderInfos `json:"orderInfos"`
 }
 
 type ProperTransactionInfo struct {
 	CardTransactionType string `json:"cardTransactionType"`
-	ReqWithCapture      bool   `json:"reqWithCapture"`
+	ReqWithCapture      string `json:"reqWithCapture"`
 	ReqJPOInformation   string `json:"reqJpoInformation"`
 }
 
@@ -195,12 +196,21 @@ type TransactionInfo struct {
 	VResultCode string                `json:"vResultCode"`
 }
 
+type TransactionInfos struct {
+	TransactionInfo []TransactionInfo `json:"transactionInfo"`
+}
+
 type OrderInfo struct {
-	AccountID        string            `json:"accountId"`
-	Index            string            `json:"index"`
-	OrderID          string            `json:"orderId"`
-	ServiceTypeCd    string            `json:"serviceTypeCd"`
-	TransactionInfos []TransactionInfo `json:"transactionInfos"`
+	AccountID          string            `json:"accountId"`
+	Index              int               `json:"index"`
+	OrderID            string            `json:"orderId"`
+	ServiceTypeCd      string            `json:"serviceTypeCd"`
+	LastSuccessTxnType string            `json:"lastSuccessTxnType"`
+	TransactionInfos   *TransactionInfos `json:"transactionInfos"`
+}
+
+type OrderInfos struct {
+	OrderInfo []OrderInfo `json:"orderInfo"`
 }
 
 type CardInfo struct {
