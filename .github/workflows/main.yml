@@ -23,7 +23,16 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: '^1.17.5' # The Go version to download (if necessary) and use.
-      - name: Run Test
+
+      - name: Install dependencies
+        run: |
+          go version
+          go get -u golang.org/x/lint/golint
+
+      - name: Build
+        run: go build .
+
+      - name: Test With Coverage
         env: 
           MDK_API_TOKEN: ${{ secrets.MDK_API_TOKEN }}
           MDK_API_URL: ${{ secrets.MDK_API_URL }}
@@ -35,11 +44,12 @@ jobs:
           PAYMENT_API_URL: ${{ secrets.PAYMENT_API_URL }}
           SEARCH_API_URL: ${{ secrets.SEARCH_API_URL }}
         run: |
-          go test -v ./... -covermode=count -coverprofile=coverage.out
-          go tool cover -func=coverage.out -o=coverage.out
+          go test -v -coverprofile=coverage.txt -covermode=atomic ./...
 
-      - name: Go Coverage Badge  # Pass the `coverage.out` output to this action
-        uses: tj-actions/coverage-badge-go@v1.1
-        with:
-          filename: coverage.out
-      - run: go build
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+      
+      - name: Run Vet & Lint
+        run: |
+          go vet .
+          golint -set_exit_status=1 .
