@@ -1,6 +1,5 @@
 [![CI](https://github.com/david1992121/veritrans/actions/workflows/main.yml/badge.svg)](https://github.com/david1992121/veritrans/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/david1992121/veritrans/branch/main/graph/badge.svg?token=IJAN6H2PU2)](https://codecov.io/gh/david1992121/veritrans)
-![GitHub](https://img.shields.io/github/license/david1992121/veritrans?label=license)
 [![Go Report Card](https://goreportcard.com/badge/github.com/david1992121/veritrans)](https://goreportcard.com/report/github.com/david1992121/veritrans)
 
 # Go Veritrans4G
